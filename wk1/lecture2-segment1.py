@@ -1,4 +1,5 @@
 
+
 class Food(object):
     def __init__(self, n, v, w):
         self.name = n
@@ -15,10 +16,6 @@ class Food(object):
                  + ', ' + str(self.calories) + '>'
 
 def buildMenu(names, values, calories):
-    """names, values, calories lists of same length.
-       name a list of strings
-       values and calories lists of numbers
-       returns list of Foods"""
     menu = []
     for i in range(len(values)):
         menu.append(Food(names[i], values[i],
@@ -27,7 +24,7 @@ def buildMenu(names, values, calories):
 
 def greedy(items, maxCost, keyFunction):
     """Assumes items a list, maxCost >= 0,
-         keyFunction maps elements of items to numbers"""
+         keyFunction maps elements of Items to numbers"""
     itemsCopy = sorted(items, key = keyFunction,
                        reverse = True)
     result = []
@@ -57,10 +54,47 @@ def testGreedys(foods, maxUnits):
           'calories')
     testGreedy(foods, maxUnits, Food.density)
 
+def maxVal(toConsider, avail):
+    """Assumes toConsider a list of items, avail a weight
+       Returns a tuple of the total value of a solution to the
+         0/1 knapsack problem and the items of that solution"""
+    if toConsider == [] or avail == 0:
+        result = (0, ())
+    elif toConsider[0].getCost() > avail:
+        #Explore right branch only
+        result = maxVal(toConsider[1:], avail)
+    else:
+        nextItem = toConsider[0]
+        #Explore left branch
+        withVal, withToTake = maxVal(toConsider[1:],
+                                     avail - nextItem.getCost())
+        withVal += nextItem.getValue()
+        #Explore right branch
+        withoutVal, withoutToTake = maxVal(toConsider[1:], avail)
+        #Choose better branch
+        if withVal > withoutVal:
+            result = (withVal, withToTake + (nextItem,))
+        else:
+            result = (withoutVal, withoutToTake)
+    return result
+
+def testMaxVal(foods, maxUnits, printItems = True):
+    print('Use search tree to allocate', maxUnits,
+          'calories')
+    val, taken = maxVal(foods, maxUnits)
+    print('Total value of items taken =', val)
+    if printItems:
+        for item in taken:
+            print('   ', item)
 
 names = ['wine', 'beer', 'pizza', 'burger', 'fries',
          'cola', 'apple', 'donut', 'cake']
 values = [89,90,95,100,90,79,50,10]
 calories = [123,154,258,354,365,150,95,195]
 foods = buildMenu(names, values, calories)
-testGreedys(foods, 1000)
+
+testGreedys(foods, 750)
+print('')
+testMaxVal(foods, 750)
+
+
