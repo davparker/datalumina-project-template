@@ -105,28 +105,48 @@ def buildCityGraph(graphType):
     return g
 
 
+print("Undirected Graph:")
 print(buildCityGraph(Graph))
+print("\nDirected Graph:")
 print(buildCityGraph(Digraph))
 
 
-nodes = []
-nodes.append(Node("ABC"))  # nodes[0]
-nodes.append(Node("ACB"))  # nodes[1]
-nodes.append(Node("BAC"))  # nodes[2]
-nodes.append(Node("BCA"))  # nodes[3]
-nodes.append(Node("CAB"))  # nodes[4]
-nodes.append(Node("CBA"))  # nodes[5]
+# Exercise 2 - begin
+# nodes = []
+# nodes.append(Node("ABC"))  # nodes[0]
+# nodes.append(Node("ACB"))  # nodes[1]
+# nodes.append(Node("BAC"))  # nodes[2]
+# nodes.append(Node("BCA"))  # nodes[3]
+# nodes.append(Node("CAB"))  # nodes[4]
+# nodes.append(Node("CBA"))  # nodes[5]
 
-g = Graph()
-for n in nodes:
-    g.addNode(n)
+# g = Graph()
+# for n in nodes:
+#     g.addNode(n)
 
-# Add edges between nodes (students) swapping adjacent students
-# Only add one direction since Graph class automatically adds reverse edges
-g.addEdge(Edge(nodes[0], nodes[1]))  # ABC->ACB (also creates ACB->ABC)
-g.addEdge(Edge(nodes[0], nodes[2]))  # ABC->BAC (also creates BAC->ABC)
-g.addEdge(Edge(nodes[1], nodes[4]))  # ACB->CAB (also creates CAB->ACB)
-g.addEdge(Edge(nodes[2], nodes[3]))  # BAC->BCA (also creates BCA->BAC)
-g.addEdge(Edge(nodes[3], nodes[5]))  # BCA->CBA (also creates CBA->BCA)
-g.addEdge(Edge(nodes[4], nodes[5]))  # CAB->CBA (also creates CBA->CAB)
-print(g)
+# # Add edges between nodes (students) swapping adjacent students
+# # Only add one direction since Graph class automatically adds reverse edges
+# g.addEdge(Edge(nodes[0], nodes[1]))  # ABC->ACB (also creates ACB->ABC)
+# g.addEdge(Edge(nodes[0], nodes[2]))  # ABC->BAC (also creates BAC->ABC)
+# g.addEdge(Edge(nodes[1], nodes[4]))  # ACB->CAB (also creates CAB->ACB)
+# g.addEdge(Edge(nodes[2], nodes[3]))  # BAC->BCA (also creates BCA->BAC)
+# g.addEdge(Edge(nodes[3], nodes[5]))  # BCA->CBA (also creates CBA->BCA)
+# g.addEdge(Edge(nodes[4], nodes[5]))  # CAB->CBA (also creates CBA->CAB)
+# print("\nGraph of student permutations:")
+# print(g)
+# Exercise 2 - end
+
+# Exercise 7 - begin
+
+
+class WeightedEdge(Edge):
+    def __init__(self, src, dest, weight):
+        """Assumes src and dest are nodes, weight a number"""
+        Edge.__init__(self, src, dest)
+        self.weight = weight
+
+    def getWeight(self):
+        return self.weight
+
+    def __str__(self):
+        return Edge.__str__(self) + " (" + str(self.weight) + ")"
