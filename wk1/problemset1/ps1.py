@@ -1,12 +1,13 @@
 ###########################
-# 6.00.2x Problem Set 1: Space Cows 
+# 6.00.2x Problem Set 1: Space Cows
 
 from ps1_partition import get_partitions
 import time
 
-#================================
+# ================================
 # Part A: Transporting Space Cows
-#================================
+# ================================
+
 
 def load_cows(filename):
     """
@@ -23,16 +24,16 @@ def load_cows(filename):
 
     cow_dict = dict()
 
-    f = open(filename, 'r')
-    
+    f = open(filename, "r")
+
     for line in f:
-        line_data = line.split(',')
+        line_data = line.split(",")
         cow_dict[line_data[0]] = int(line_data[1])
     return cow_dict
 
 
 # Problem 1
-def greedy_cow_transport(cows,limit=10):
+def greedy_cow_transport(cows, limit=10):
     """
     Uses a greedy heuristic to determine an allocation of cows that attempts to
     minimize the number of spaceship trips needed to transport all the cows. The
@@ -48,18 +49,30 @@ def greedy_cow_transport(cows,limit=10):
     Parameters:
     cows - a dictionary of name (string), weight (int) pairs
     limit - weight limit of the spaceship (an int)
-    
+
     Returns:
     A list of lists, with each inner list containing the names of cows
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+    remaining_cows = cows.copy()
+    trips = []
+    while len(remaining_cows) > 0:
+        trip = []
+        total_weight = 0
+        sorted_cows = sorted(remaining_cows.items(), key=lambda x: x[1], reverse=True)
+        for cow, weight in sorted_cows:
+            if total_weight + weight <= limit:
+                trip.append(cow)
+                total_weight += weight
+                del remaining_cows[cow]
+        trips.append(trip)
+
+    return trips
 
 
 # Problem 2
-def brute_force_cow_transport(cows,limit=10):
+def brute_force_cow_transport(cows, limit=10):
     """
     Finds the allocation of cows that minimizes the number of spaceship trips
     via brute force.  The brute force algorithm should follow the following method:
@@ -67,22 +80,27 @@ def brute_force_cow_transport(cows,limit=10):
     1. Enumerate all possible ways that the cows can be divided into separate trips
     2. Select the allocation that minimizes the number of trips without making any trip
         that does not obey the weight limitation
-            
+
     Does not mutate the given dictionary of cows.
 
     Parameters:
     cows - a dictionary of name (string), weight (int) pairs
     limit - weight limit of the spaceship (an int)
-    
+
     Returns:
     A list of lists, with each inner list containing the names of cows
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+    cow_names = list(cows.keys())
+    best_partition = None
+    for partition in get_partitions(cow_names):
+        if all(sum(cows[cow] for cow in trip) <= limit for trip in partition):
+            if best_partition is None or len(partition) < len(best_partition):
+                best_partition = partition
+    return best_partition
 
-        
+
 # Problem 3
 def compare_cow_transport_algorithms():
     """
@@ -90,15 +108,28 @@ def compare_cow_transport_algorithms():
     greedy_cow_transport and brute_force_cow_transport functions here. Use the
     default weight limits of 10 for both greedy_cow_transport and
     brute_force_cow_transport.
-    
+
     Print out the number of trips returned by each method, and how long each
     method takes to run in seconds.
 
     Returns:
     Does not return anything.
     """
-    # TODO: Your code here
-    pass
+    limit = 10
+    start = time.time()
+    greedy_result = greedy_cow_transport(cows, limit)
+    end = time.time()
+    print("Greedy method:")
+    print("Number of trips:", len(greedy_result))
+    print("Time taken:", end - start)
+
+    limit = 10
+    start = time.time()
+    brute_force_result = brute_force_cow_transport(cows, limit)
+    end = time.time()
+    print("Brute force method:")
+    print("Number of trips:", len(brute_force_result))
+    print("Time taken:", end - start)
 
 
 """
@@ -108,10 +139,8 @@ lines to print the result of your problem.
 """
 
 cows = load_cows("ps1_cow_data.txt")
-limit=100
+limit = 100
 print(cows)
 
 print(greedy_cow_transport(cows, limit))
 print(brute_force_cow_transport(cows, limit))
-
-
